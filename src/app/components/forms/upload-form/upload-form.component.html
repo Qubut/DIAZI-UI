@@ -1,0 +1,46 @@
+<h2>Json Datei hochladen</h2>
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div class="form-group mb-6">
+    <mat-form-field style="width: 100%">
+      <mat-label>Datei</mat-label>
+      <button type="button" mat-icon-button matPrefix (click)="f_input.click()">
+        <mat-icon>attach_file</mat-icon>
+      </button>
+      <input
+        type="text"
+        readonly
+        matInput
+        [formControl]="display"
+        (click)="f_input.click()"
+      />
+      <input
+        formControlName="file"
+        type="file"
+        hidden
+        accept=".json"
+        #f_input
+        (change)="handleFileInputChange($event)"
+      />
+      <div
+        *ngIf="uploadLimitSize"
+        class="mat-error ng-tns-c106-8 ng-star-inserted mt-5"
+        style="position: absolute"
+      >
+        Die Gesamtgröße darf 2 MB nicht überschreiten.
+      </div>
+    </mat-form-field>
+  </div>
+  <div class="form-group mb-6">
+    <button
+      type="submit"
+      mat-raised-button
+      color="primary"
+      class="w-full"
+      [disabled]="!isFileValid"
+      [disableRipple]="!isFileValid"
+      (click)="sendFile()"
+    >
+      hochladen
+    </button>
+  </div>
+</form>
