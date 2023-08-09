@@ -1,11 +1,30 @@
 .dialog-title {
   @apply text-center text-blue-600;
+  @apply dark:text-black;
 }
 
 .json-viewer {
   @apply p-4 max-h-96 overflow-auto border border-gray-200 rounded;
 }
-
+ .json-viewer {
+  --ngx-json-string: #007acc;       
+  --ngx-json-number: #d16969;       
+  --ngx-json-boolean: #0b70db;      
+  --ngx-json-date: #138313;         
+  --ngx-json-array: #8a2be2;        
+  --ngx-json-object: #d4852c;       
+  --ngx-json-function: #795da3;     
+  --ngx-json-null: #888888;         
+  --ngx-json-null-bg: #e2e2e2;      
+  --ngx-json-undefined: #d4852c;    
+  --ngx-json-toggler: #555555;      
+  --ngx-json-key: #0a7b0a;          
+  --ngx-json-separator: #333333;    
+  --ngx-json-value: #007acc;        
+  --ngx-json-undefined-key: #d4852c; 
+  --ngx-json-font-family: 'Courier New', monospace;
+  @apply text-sm;
+}
 .empty-json {
   @apply text-center text-gray-400 p-4;
 }

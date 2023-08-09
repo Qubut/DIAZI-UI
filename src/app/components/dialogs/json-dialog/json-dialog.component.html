@@ -1,8 +1,11 @@
-<h2 mat-dialog-title class="dialog-title">JSON File Viewer</h2>
-<mat-dialog-content>
+<h2 mat-dialog-title class="dialog-title">JSON Dateibetrachter</h2>
+<mat-dialog-actions class="dialog-actions close-button">
+  <button mat-button mat-dialog-close>Schließen</button>
+</mat-dialog-actions>
+<mat-dialog-content class="dark:bg-black">
   <ng-container *ngIf="jsonFile$ | async as jf; else noJSON">
     <ngx-json-viewer
-      class="json-viewer"
+      class="dark:bg-black json-viewer"
       [json]="jf"
       [depth]="2"
     ></ngx-json-viewer>
@@ -10,10 +13,7 @@
 
   <ng-template #noJSON>
     <div class="empty-json">
-      <h4>No JSON files to display yet</h4>
+      <h4>Noch keine JSON-Dateien zum Anzeigen</h4>
     </div>
   </ng-template>
 </mat-dialog-content>
-<mat-dialog-actions class="dialog-actions close-button " >
-  <button mat-button mat-dialog-close>Close</button>
-</mat-dialog-actions>

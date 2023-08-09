@@ -32,7 +32,6 @@ export const jsonFileReducer = createReducer(
     const updatedMachines = {
       ...state.machines,
       [machineId]: machine,
-      machinesChanged:true
     };
 
     const updatedJson = { ...state.json };
@@ -42,6 +41,7 @@ export const jsonFileReducer = createReducer(
       ...state,
       machines: updatedMachines,
       json: updatedJson,
+      machinesChanged:true
     };
   })
 );

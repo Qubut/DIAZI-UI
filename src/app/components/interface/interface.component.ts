@@ -74,7 +74,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
   token$ = new Observable<string>();
   isTokenSent$ = new Observable<boolean>();
   machines$ = new Observable<{ [k: string]: any } | null>();
-
+  errorOcurred$ = new Observable<any>();
   constructor(
     private _store: Store<{
       spinner: SpinnerState;
@@ -90,18 +90,29 @@ export class LoginComponent implements OnInit, AfterViewInit {
     this.isTokenSent$ = this._store.pipe(map((state) => state.auth.tokenSent));
     this.token$ = this._store.pipe(map((state) => state.auth.token));
     this.machines$ = this._store.pipe(map((state) => state.data.machines));
+    this.errorOcurred$ = this._store.pipe(map((s) => s.auth.error));
   }
   ngAfterViewInit(): void {
-    this._terminalService.write('Please Authenticate! ');
+    this._terminalService.write('Bitte authentifizieren Sie sich!');
   }
   ngOnInit(): void {
+    combineLatest([this.isAuthenticated$,this.errorOcurred$]).pipe(
+      filter(([isAuthenticated])=>!isAuthenticated),
+      // first(),
+      tap(async ([_,e]) =>{
+        console.log(`error`, e)
+        this._terminalService.error(
+          <string>(<{ [k: string]: any }>e)['message']
+        )}
+      )
+    );
     combineLatest([this.isAuthenticated$, this.token$])
       .pipe(
         filter(([isAuthenticated]) => isAuthenticated),
         first(),
         tap(async ([_, token]) => {
           this._terminalService.terminal?.underlying!.reset();
-          await this._terminalService.write('Token received');
+          await this._terminalService.write('Token erhalten');
         })
       )
       .subscribe();
@@ -109,11 +120,14 @@ export class LoginComponent implements OnInit, AfterViewInit {
     combineLatest([this.isAuthenticated$, this.isTokenSent$])
       .pipe(
         filter(
-          ([isAuthenticated, isTokenSent]) => isAuthenticated && isTokenSent
+          ([isAuthenticated, _]) => isAuthenticated
         ),
         first(),
-        tap(async () => {
-          await this._terminalService.write('Token sent to NodeRed');
+        tap(async ([_,isTokenSent]) => {
+          if(isTokenSent)
+          await this._terminalService.write('Token an NodeRed gesendet');
+          else
+            await this._terminalService.error('Fehler beim Senden vom Token')
         })
       )
       .subscribe();

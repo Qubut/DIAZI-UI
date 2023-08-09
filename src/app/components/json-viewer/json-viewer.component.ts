@@ -27,9 +27,14 @@ export class JsonViewerComponent implements OnInit {
         map(async (state) => {
           if (this._terminalService.terminal && this.data != state.data.json) {
             this.data = state.data.json;
-            (await state.data.machinesChanged)
-              ? this._terminalService.write("machine's changes in JSON Viewer")
-              : this._terminalService.write('JSON Viewer recieved Data');
+            if (state.data.machinesChanged)
+              await this._terminalService.write(
+                'Änderungen an der Maschine im JSON Dateibetrachter bereit zum Anschauen'
+              );
+            else
+              await this._terminalService.write(
+                'JSON Dateibetrachter hat Daten empfangen'
+              );
           }
 
           return state.data.json;

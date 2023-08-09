@@ -39,12 +39,12 @@ export class TerminalService {
 
   async write(msg: string) {
     // Move cursor to the beginning of the line and then write the message
-    await setTimeout(() => this.terminal?.write(`\n${this.prompt}${msg}\r`), 100);
+    await setTimeout(() => this.terminal?.write(`\r\n${this.prompt}${msg} `), 100);
   }
 
   async error(msg: string) {
     const errorMsg = `\x1b[1;31mError: ${msg}\x1b[0m`;
     // Move cursor to the beginning of the line and then write the error message
-    await setTimeout(() => this.terminal?.write(`\n${this.prompt}${errorMsg}\r`), 100);
+    await setTimeout(() => this.terminal?.write(`\r\n${this.prompt}${errorMsg} `), 100);
   }
 }

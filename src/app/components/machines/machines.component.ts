@@ -34,33 +34,35 @@ export class MachinesComponent implements OnInit {
     this.selectedMachine = machineId;
     this._terminalService.clear();
     this._terminalService.clear();
-    this._terminalService.write(`Editing "${this.selectedMachine}"`);
+    this._terminalService.write(`"${this.selectedMachine}" wird bearbeitet`);
   }
   onSave(machines: { [k: string]: any[] }) {
     const value = this._editorService.getValue();
     if (value) {
       const machine = JSON.parse(value);
-      const machineId = this.selectedMachine
+      const machineId = this.selectedMachine;
       if (machineId && machines[machineId]) {
         this._store.dispatch(updateMachine({ machineId, machine }));
-        this._terminalService.write(`changes of "${this.selectedMachine} saved"`)
+        this._terminalService.write(
+          `Änderungen von "${this.selectedMachine}" wurden gespeichert`
+        );
       }
     }
   }
 
   onSendAll(machines: { [k: string]: any[] }) {
-    this._terminalService.write(`Sending data`);
-    
-    // Flatten the 2D array to a 1D array
+    this._terminalService.write(`Daten werden gesendet`);
+
+    // Das 2D-Array in ein 1D-Array umwandeln
     const data = Object.values(machines).flat();
-  
+
     this._apiService.sendData(data).subscribe({
       next: (response) => {
-        this._terminalService.write('Data sent successfully');
+        this._terminalService.write('Daten erfolgreich gesendet');
       },
       error: (err) => {
-        this._terminalService.write('Error while sending data:');
-        this._terminalService.error(err)
+        this._terminalService.write('Fehler beim Senden der Daten:');
+        this._terminalService.error(JSON.stringify(err.message, null, 2));
       },
       complete: () => {},
     });

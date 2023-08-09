@@ -18,7 +18,7 @@ export class EditorService {
     );
     if (this.editor) {
       this.aceEditor = ace.edit(this.editor.nativeElement);
-      this.aceEditor.setTheme('ace/theme/twilight');
+      this.aceEditor.setTheme('ace/theme/monokai'); 
       this.aceEditor.session.setMode('ace/mode/json');
     }
   }

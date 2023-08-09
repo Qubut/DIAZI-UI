@@ -24,7 +24,6 @@ export class TerminalComponent implements OnInit, AfterViewInit {
     this.machines$ = this._store.pipe(
       filter((s) => s.data.machines != null),
       map((state) => {
-        this._terminalService.write("New Machines are available")
         return state.data.machines;
       })
     );
