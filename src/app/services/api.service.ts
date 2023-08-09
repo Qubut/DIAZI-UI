@@ -1,13 +1,11 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-
+import { environment } from 'src/environments/environment';
 @Injectable({
   providedIn: 'root',
 })
 export class ApiService {
-  private website = 'https://haw.ifox-systems.de/api/v1';
-  private nodered = 'http://localhost:1880';
   headers: HttpHeaders = new HttpHeaders({
     'Content-Type': 'application/json; charset=utf-8',
   });
@@ -17,17 +15,17 @@ export class ApiService {
     password: string;
   }): Observable<{ token: string }> {
     return this._httpClient.post<{ token: string }>(
-      `${this.website}/general/Auth/login`,
+      `${environment.ifox}/general/Auth/login`,
       data
     );
   }
   sendToken(token: string) {
-    return this._httpClient.post(`${this.nodered}/authentication`, {token}, {
+    return this._httpClient.post(`${environment.nodeRed}/authentication`, {token}, {
       headers: this.headers,
     });
   }
   sendData(data:{[k:string]:any}|{[k:string]:any}[]){
-    return this._httpClient.post(`${this.nodered}/data`, {machines:data}, {
+    return this._httpClient.post(`${environment.nodeRed}/data`, {machines:data}, {
       headers: this.headers,
     });
 
