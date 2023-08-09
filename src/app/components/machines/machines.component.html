@@ -1,0 +1,31 @@
+<ng-container *ngIf="machines$ | async as machines">
+  <form>
+    <div style="display: flex; justify-content: space-between">
+      <mat-form-field>
+        <mat-label>Choose a machine</mat-label>
+        <mat-select
+          [(ngModel)]="selectedMachine"
+          name="machine"
+          (selectionChange)="onSelectMachine($event.value)"
+        >
+          <mat-option
+            *ngFor="let machineId of machines | keyvalue"
+            [value]="machineId.key"
+          >
+            {{ machineId.key }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <button mat-raised-button color="primary" (click)="onSave(machines)">
+        Save
+      </button>
+      <button mat-raised-button color="primary" (click)="onSendAll(machines)">
+        Send All
+      </button>
+    </div>
+  </form>
+
+  <app-editor *ngIf="selectedMachine" [data]="machines[selectedMachine]">
+  </app-editor>
+</ng-container>

@@ -1,0 +1,18 @@
+.dialog-title {
+  @apply text-center text-blue-600;
+}
+
+.json-viewer {
+  @apply p-4 max-h-96 overflow-auto border border-gray-200 rounded;
+}
+
+.empty-json {
+  @apply text-center text-gray-400 p-4;
+}
+
+.dialog-actions {
+  @apply justify-center;
+}
+.close-button {
+  @apply absolute top-2 right-2;
+}

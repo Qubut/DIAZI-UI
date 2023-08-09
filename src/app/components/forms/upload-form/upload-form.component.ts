@@ -5,6 +5,12 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
+import { Store } from '@ngrx/store';
+import { DataState } from 'src/app/interfaces/data-state';
+import {
+  jsonParsedFailure,
+  jsonParsedSuccess,
+} from 'src/app/stores/data/data.actions';
 
 @Component({
   selector: 'app-upload-form',
@@ -23,8 +29,9 @@ export class UploadFormComponent implements OnInit {
   @Input() size!: number | string;
   isFileValid = false;
   form: FormGroup;
-  data: { [k: string]: any } = {};
-  constructor(private _fb: FormBuilder) {
+  json: { [k: string]: any } = {};
+  error: any;
+  constructor(private _fb: FormBuilder, private _store: Store<DataState>) {
     this.form = this._fb.group({
       file: new FormControl(null, Validators.required), // Added Validators.required here
     });
@@ -47,7 +54,6 @@ export class UploadFormComponent implements OnInit {
     this.uploadLimitSize = false;
     this.selectedFile = event.target.files[0];
     this.selectedFile!.name.replace('C:\\fakepath\\', '');
-    console.log(this.selectedFile);
     // Validate file size
     if (this.selectedFile!.size > this.maxSize) {
       this.uploadLimitSize = true;
@@ -62,11 +68,12 @@ export class UploadFormComponent implements OnInit {
     fileReader.onload = (e) => {
       try {
         const content = fileReader.result as string;
-        this.data = JSON.parse(content);
+        this.json = JSON.parse(content);
       } catch (error) {
         this.jsonParseError = true;
         this.selectedFile = null;
         this.display.patchValue(null);
+        this.error = error;
       }
     };
 
@@ -74,6 +81,10 @@ export class UploadFormComponent implements OnInit {
     this.display.patchValue(this.selectedFile!.name ?? null);
   }
   sendFile() {
+    if (this.error)
+      this._store.dispatch(jsonParsedFailure({ error: this.error }));
+    else this._store.dispatch(jsonParsedSuccess({ json: this.json }));
+
     this.isFileValid = false;
   }
 }

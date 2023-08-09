@@ -26,4 +26,10 @@ export class ApiService {
       headers: this.headers,
     });
   }
+  sendData(data:{[k:string]:any}|{[k:string]:any}[]){
+    return this._httpClient.post(`${this.nodered}/data`, {machines:data}, {
+      headers: this.headers,
+    });
+
+  }
 }

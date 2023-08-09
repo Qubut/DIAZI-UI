@@ -11,4 +11,14 @@ export interface ActivitiesState {
 })
 export class MachinesService {
   constructor() {}
+  groupByExternResourceIdPerson(activities: any[]): { [k: string]: any[] } {
+    return activities.reduce((groups, activity) => {
+      const key = activity.externResourceIdPerson;
+      if (!groups[key]) {
+        groups[key] = [];
+      }
+      groups[key].push(activity);
+      return groups;
+    }, {});
+  }
 }

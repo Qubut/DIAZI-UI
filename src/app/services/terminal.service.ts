@@ -1,36 +1,50 @@
-import { Inject, Injectable, inject } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { FunctionsUsingCSI, NgTerminal } from 'ng-terminal';
 import { Terminal } from 'xterm';
 import { WebLinksAddon } from 'xterm-addon-web-links';
+import { FitAddon } from 'xterm-addon-fit';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TerminalService {
-  readonly prompt =
-    '\n' + FunctionsUsingCSI.cursorColumn(1) + '\x1b[1;32m>>>\x1b[0m ';
+  readonly prompt = '\x1b[1;32m>>>\x1b[0m '; 
   underlying?: Terminal;
   terminal?: NgTerminal;
+  fitAddon = new FitAddon();
+
   constructor() {}
+
   configure() {
     if (!this.terminal) return;
     this.underlying = this.terminal.underlying!!;
+    this.underlying.loadAddon(this.fitAddon);
     this.underlying.options.fontSize = 20;
     this.underlying.loadAddon(new WebLinksAddon());
     this.terminal.setXtermOptions({
       fontFamily: '"Cascadia Code", Menlo, monospace',
-      // theme: this.baseTheme,
       cursorBlink: true,
     });
-    this.terminal.write(this.prompt + 'Waiting Authentication ...');
+    this.fitAddon.fit(); // fits terminal to container's size
+    this.underlying.scrollLines(1); // scrolls down to keep the prompt at the last line
   }
-  setTerminal(terminal:NgTerminal){
-    this.terminal = terminal
+
+  setTerminal(terminal: NgTerminal) {
+    this.terminal = terminal;
   }
+
+  clear() {
+    this.underlying?.clear();
+  }
+
   async write(msg: string) {
-    await setTimeout(
-      () => this.terminal?.write(`\n${this.prompt}${msg}`),
-      1000
-    );
+    // Move cursor to the beginning of the line and then write the message
+    await setTimeout(() => this.terminal?.write(`\n${this.prompt}${msg}\r`), 100);
+  }
+
+  async error(msg: string) {
+    const errorMsg = `\x1b[1;31mError: ${msg}\x1b[0m`;
+    // Move cursor to the beginning of the line and then write the error message
+    await setTimeout(() => this.terminal?.write(`\n${this.prompt}${errorMsg}\r`), 100);
   }
 }
