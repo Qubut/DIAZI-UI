@@ -11,6 +11,10 @@ import {
   jsonParsedFailure,
   jsonParsedSuccess,
 } from 'src/app/stores/data/data.actions';
+import {
+  publishMessage,
+  subscribeToTopic,
+} from 'src/app/stores/mqtt-client/mqtt-client.actions';
 
 @Component({
   selector: 'app-upload-form',
@@ -23,9 +27,10 @@ export class UploadFormComponent implements OnInit {
 
   public uploadLimitSize = false;
   public jsonParseError = false;
-
+  public isUploading = false;
+  public uploadProgress = 0;
   readonly maxSize: number = 2242880;
-
+  content: string = '';
   @Input() size!: number | string;
   isFileValid = false;
   form: FormGroup;
@@ -67,8 +72,8 @@ export class UploadFormComponent implements OnInit {
     const fileReader = new FileReader();
     fileReader.onload = (e) => {
       try {
-        const content = fileReader.result as string;
-        this.json = JSON.parse(content);
+        this.content = fileReader.result as string;
+        this.json = JSON.parse(this.content);
       } catch (error) {
         this.jsonParseError = true;
         this.selectedFile = null;
@@ -81,9 +86,22 @@ export class UploadFormComponent implements OnInit {
     this.display.patchValue(this.selectedFile!.name ?? null);
   }
   sendFile() {
+    console.log(this.error);
+    console.log(this.content);
     if (this.error)
       this._store.dispatch(jsonParsedFailure({ error: this.error }));
-    else this._store.dispatch(jsonParsedSuccess({ json: this.json }));
+    else {
+      this._store.dispatch(
+        publishMessage({
+          topic: '/file/json',
+          message: this.content,
+        })
+      );
+      this._store.dispatch(jsonParsedSuccess({ json: this.json }));
+      this._store.dispatch(subscribeToTopic({ topic: '/file/received' }));
+      this._store.dispatch(subscribeToTopic({ topic: '/file/accepted' }));
+      this._store.dispatch(subscribeToTopic({ topic: '/resources' }));
+    }
 
     this.isFileValid = false;
   }

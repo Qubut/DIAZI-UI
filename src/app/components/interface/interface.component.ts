@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, Input, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Observable, combineLatest, filter, first, map, tap } from 'rxjs';
+import { Observable, combineLatest, filter, first, last, map, tap } from 'rxjs';
 import { AuthenticationState } from 'src/app/interfaces/authentication-state';
 import { DataState } from 'src/app/interfaces/data-state';
 import { SpinnerState } from 'src/app/interfaces/spinner-state';
@@ -12,6 +12,8 @@ import {
   transition,
   sequence,
 } from '@angular/animations';
+import { MqttClientState } from 'src/app/interfaces/mqtt-client-state';
+import { MqttManagerService } from 'src/app/services/mqtt-manager.service';
 @Component({
   selector: 'app-interface',
   templateUrl: './interface.component.html',
@@ -75,13 +77,16 @@ export class LoginComponent implements OnInit, AfterViewInit {
   isTokenSent$ = new Observable<boolean>();
   machines$ = new Observable<{ [k: string]: any } | null>();
   errorOcurred$ = new Observable<any>();
+  mqtt$ = new Observable<{ [topic: string]: string[] }>();
   constructor(
     private _store: Store<{
       spinner: SpinnerState;
       auth: AuthenticationState;
       data: DataState;
+      mqtt: MqttClientState;
     }>,
-    private _terminalService: TerminalService
+    private _terminalService: TerminalService,
+    private _mqttManager: MqttManagerService
   ) {
     this.isLoading$ = this._store.pipe(map((state) => state.spinner.isLoading));
     this.isAuthenticated$ = this._store.pipe(
@@ -91,21 +96,19 @@ export class LoginComponent implements OnInit, AfterViewInit {
     this.token$ = this._store.pipe(map((state) => state.auth.token));
     this.machines$ = this._store.pipe(map((state) => state.data.machines));
     this.errorOcurred$ = this._store.pipe(map((s) => s.auth.error));
+    this.mqtt$ = this._store.pipe(map((s) => s.mqtt.receivedMessages));
   }
   ngAfterViewInit(): void {
     this._terminalService.write('Bitte authentifizieren Sie sich!');
   }
   ngOnInit(): void {
-    combineLatest([this.isAuthenticated$,this.errorOcurred$]).pipe(
-      filter(([isAuthenticated])=>!isAuthenticated),
-      // first(),
-      tap(async ([_,e]) =>{
-        console.log(`error`, e)
-        this._terminalService.error(
-          <string>(<{ [k: string]: any }>e)['message']
-        )}
-      )
-    );
+    this.mqtt$.subscribe({
+      next: (o) => {
+       this._mqttManager.checkFileIsSent(o)
+      },
+    });
+  
+
     combineLatest([this.isAuthenticated$, this.token$])
       .pipe(
         filter(([isAuthenticated]) => isAuthenticated),
@@ -117,17 +120,19 @@ export class LoginComponent implements OnInit, AfterViewInit {
       )
       .subscribe();
 
-    combineLatest([this.isAuthenticated$, this.isTokenSent$])
+    combineLatest([
+      this.isAuthenticated$,
+      this.isTokenSent$,
+      this.errorOcurred$,
+    ])
       .pipe(
-        filter(
-          ([isAuthenticated, _]) => isAuthenticated
-        ),
+        filter(([isAuthenticated, _]) => isAuthenticated),
         first(),
-        tap(async ([_,isTokenSent]) => {
-          if(isTokenSent)
-          await this._terminalService.write('Token an NodeRed gesendet');
-          else
-            await this._terminalService.error('Fehler beim Senden vom Token')
+        tap(async ([_, isTokenSent, errorOcurred]) => {
+          if (isTokenSent && !errorOcurred)
+            await this._terminalService.write('Token an NodeRed gesendet');
+          else if (!isTokenSent && errorOcurred)
+            await this._terminalService.error(String(errorOcurred));
         })
       )
       .subscribe();

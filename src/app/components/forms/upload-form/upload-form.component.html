@@ -43,5 +43,8 @@
     >
       hochladen
     </button>
+    <div *ngIf="isUploading" class="mt-4">
+  <mat-progress-bar mode="determinate" [value]="uploadProgress"></mat-progress-bar>
+</div>
   </div>
 </form>

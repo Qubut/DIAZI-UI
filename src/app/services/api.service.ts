@@ -1,7 +1,10 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { MqttClientState } from '../interfaces/mqtt-client-state';
+import { sendToken } from '../stores/authentication/authentication.actions';
 @Injectable({
   providedIn: 'root',
 })
@@ -9,7 +12,7 @@ export class ApiService {
   headers: HttpHeaders = new HttpHeaders({
     'Content-Type': 'application/json; charset=utf-8',
   });
-  constructor(private _httpClient: HttpClient) {}
+  constructor(private _httpClient: HttpClient, private _store: Store) {}
   authenticate(data: {
     username: string;
     password: string;
@@ -20,14 +23,15 @@ export class ApiService {
     );
   }
   sendToken(token: string) {
-    return this._httpClient.post(`${environment.nodeRed}/authentication`, {token}, {
-      headers: this.headers,
-    });
+    this._store.dispatch(sendToken({ token }));
   }
-  sendData(data:{[k:string]:any}|{[k:string]:any}[]){
-    return this._httpClient.post(`${environment.nodeRed}/data`, {machines:data}, {
-      headers: this.headers,
-    });
-
+  sendData(data: { [k: string]: any } | { [k: string]: any }[]) {
+    return this._httpClient.post(
+      `${environment.nodeRed}/data`,
+      { machines: data },
+      {
+        headers: this.headers,
+      }
+    );
   }
 }

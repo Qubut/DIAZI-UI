@@ -4,6 +4,7 @@ import { Observable, filter, map } from 'rxjs';
 import { DataState } from 'src/app/interfaces/data-state';
 import { ApiService } from 'src/app/services/api.service';
 import { EditorService } from 'src/app/services/editor.service';
+import { MachinesService } from 'src/app/services/machines.service';
 import { TerminalService } from 'src/app/services/terminal.service';
 import { updateMachine } from 'src/app/stores/data/data.actions';
 
@@ -20,10 +21,12 @@ export class MachinesComponent implements OnInit {
     private _store: Store<{ data: DataState }>,
     private _terminalService: TerminalService,
     private _editorService: EditorService,
-    private _apiService: ApiService
+    private _apiService: ApiService,
+    private _machinesService: MachinesService
   ) {}
 
   ngOnInit() {
+    const data = this._machinesService.getData().subscribe((d)=>console.log(d))
     this.machines$ = this._store.pipe(
       filter((s) => s.data.machines != null),
       map((s) => s.data.machines)
@@ -32,7 +35,7 @@ export class MachinesComponent implements OnInit {
 
   onSelectMachine(machineId: string) {
     this.selectedMachine = machineId;
-    this._terminalService.clear();
+    this._terminalService.clear(); 
     this._terminalService.clear();
     this._terminalService.write(`"${this.selectedMachine}" wird bearbeitet`);
   }
