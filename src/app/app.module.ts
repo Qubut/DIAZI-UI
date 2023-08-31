@@ -39,12 +39,13 @@ import { JsonDialogComponent } from './components/dialogs/json-dialog/json-dialo
 import { IMqttServiceOptions, MqttModule } from 'ngx-mqtt';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { environment as env } from '../environments/environment';
+import { provideClientHydration } from '@angular/platform-browser';
 
 const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
-    hostname: env.mqtt.hostname,
-    port: env.mqtt.port,
-    protocol: (env.mqtt.protocol === "wss") ? "wss" : "ws",
-    path: '',
+  hostname: env.mqtt.hostname,
+  port: env.mqtt.port,
+  protocol: env.mqtt.protocol === 'wss' ? 'wss' : 'ws',
+  path: '',
 };
 
 @NgModule({
@@ -85,12 +86,10 @@ const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
       auth: authenticationReducer,
       data: jsonFileReducer,
     }),
-    EffectsModule.forRoot([
-      AuthenticationEffects,
-      DataEffects,
-    ]),
+    EffectsModule.forRoot([AuthenticationEffects, DataEffects]),
   ],
   providers: [
+    provideClientHydration(),
     { provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true },
     { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: false } },
   ],
