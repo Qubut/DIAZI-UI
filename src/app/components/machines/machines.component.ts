@@ -26,7 +26,7 @@ export class MachinesComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    const data = this._machinesService.getData().subscribe((d)=>console.log(d))
+    
     this.machines$ = this._store.pipe(
       filter((s) => s.data.machines != null),
       map((s) => s.data.machines)

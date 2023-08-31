@@ -50,15 +50,6 @@ import { MqttManagerService } from 'src/app/services/mqtt-manager.service';
         ),
       ]),
     ]),
-    trigger('slideInOut', [
-      transition(':enter', [
-        style({ transform: 'translateX(-100%)' }),
-        animate('300ms ease-in', style({ transform: 'translateX(0%)' })),
-      ]),
-      transition(':leave', [
-        animate('300ms ease-out', style({ transform: 'translateX(-100%)' })),
-      ]),
-    ]),
     trigger('rotateInOut', [
       transition(':enter', [
         style({ transform: 'rotate(180deg)' }),
@@ -126,13 +117,15 @@ export class LoginComponent implements OnInit, AfterViewInit {
       this.errorOcurred$,
     ])
       .pipe(
-        filter(([isAuthenticated, _]) => isAuthenticated),
-        first(),
-        tap(async ([_, isTokenSent, errorOcurred]) => {
-          if (isTokenSent && !errorOcurred)
-            await this._terminalService.write('Token an NodeRed gesendet');
-          else if (!isTokenSent && errorOcurred)
-            await this._terminalService.error(String(errorOcurred));
+        filter(
+          ([isAuthenticated, _]) => isAuthenticated
+        ),
+        last(),
+        tap(async ([_,isTokenSent]) => {
+          if(isTokenSent)
+          await this._terminalService.write('Token an NodeRed gesendet');
+          else
+            await this._terminalService.error('Fehler beim Senden vom Token')
         })
       )
       .subscribe();

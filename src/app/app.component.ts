@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { DataState } from './interfaces/data-state';
-import { Observable, connect, filter, map, tap } from 'rxjs';
+import { Observable, filter, map } from 'rxjs';
 import {
   trigger,
   state,
@@ -33,7 +33,7 @@ export class AppComponent implements OnInit {
     private _store: Store<{
       data: DataState;
       mqtt: MqttClientState;
-      auth: AuthenticationState
+      auth: AuthenticationState;
     }>
   ) {}
   ngOnInit(): void {
@@ -42,8 +42,7 @@ export class AppComponent implements OnInit {
     this._store
       .pipe(
         map((s) => s),
-        filter((d) => d.mqtt.isConnected),
-        tap((d) => console.log(`is connected`, d))
+        filter((d) => d.mqtt.isConnected)
       )
       .subscribe();
   }

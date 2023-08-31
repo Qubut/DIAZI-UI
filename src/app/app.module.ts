@@ -67,6 +67,7 @@ const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
     HttpClientModule,
     BrowserAnimationsModule,
     FormsModule,
+    MatProgressBarModule,
     MatInputModule,
     MatFormFieldModule,
     ReactiveFormsModule,
