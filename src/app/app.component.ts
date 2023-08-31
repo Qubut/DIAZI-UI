@@ -9,8 +9,7 @@ import {
   animate,
   transition,
 } from '@angular/animations';
-import { MqttClientState } from './interfaces/mqtt-client-state';
-import { initiateConnection } from './stores/mqtt-client/mqtt-client.actions';
+
 import { AuthenticationState } from './interfaces/authentication-state';
 @Component({
   selector: 'app-root',
@@ -32,18 +31,11 @@ export class AppComponent implements OnInit {
   constructor(
     private _store: Store<{
       data: DataState;
-      mqtt: MqttClientState;
+
       auth: AuthenticationState;
     }>
   ) {}
   ngOnInit(): void {
-    this.jsonFile$ = this._store.pipe(map((state) => state.data.machines));
-    this._store.dispatch(initiateConnection());
-    this._store
-      .pipe(
-        map((s) => s),
-        filter((d) => d.mqtt.isConnected)
-      )
-      .subscribe();
+   
   }
 }

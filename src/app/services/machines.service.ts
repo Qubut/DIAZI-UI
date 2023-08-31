@@ -1,9 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Store } from '@ngrx/store';
-import { DataState } from '../interfaces/data-state';
-import { MqttClientState } from '../interfaces/mqtt-client-state';
-import { filter, map, tap } from 'rxjs';
-import { machinesGrouped } from '../stores/data/data.actions';
 
 @Injectable({
   providedIn: 'root',

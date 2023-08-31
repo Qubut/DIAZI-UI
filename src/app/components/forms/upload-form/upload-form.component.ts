@@ -4,7 +4,6 @@ import {
   FormControl,
   FormGroup,
   Validators,
-  AbstractControl,
 } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { DataState } from 'src/app/interfaces/data-state';
@@ -12,11 +11,6 @@ import {
   jsonParsedFailure,
   jsonParsedSuccess,
 } from 'src/app/stores/data/data.actions';
-import {
-  publishMessage,
-  subscribeToTopic,
-} from 'src/app/stores/mqtt-client/mqtt-client.actions';
-
 @Component({
   selector: 'app-upload-form',
   templateUrl: './upload-form.component.html',

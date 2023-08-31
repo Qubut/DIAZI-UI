@@ -12,8 +12,6 @@ import {
   transition,
   sequence,
 } from '@angular/animations';
-import { MqttClientState } from 'src/app/interfaces/mqtt-client-state';
-import { MqttManagerService } from 'src/app/services/mqtt-manager.service';
 @Component({
   selector: 'app-interface',
   templateUrl: './interface.component.html',
@@ -74,10 +72,8 @@ export class LoginComponent implements OnInit, AfterViewInit {
       spinner: SpinnerState;
       auth: AuthenticationState;
       data: DataState;
-      mqtt: MqttClientState;
     }>,
     private _terminalService: TerminalService,
-    private _mqttManager: MqttManagerService
   ) {
     this.isLoading$ = this._store.pipe(map((state) => state.spinner.isLoading));
     this.isAuthenticated$ = this._store.pipe(
@@ -87,18 +83,12 @@ export class LoginComponent implements OnInit, AfterViewInit {
     this.token$ = this._store.pipe(map((state) => state.auth.token));
     this.machines$ = this._store.pipe(map((state) => state.data.machines));
     this.errorOcurred$ = this._store.pipe(map((s) => s.auth.error));
-    this.mqtt$ = this._store.pipe(map((s) => s.mqtt.receivedMessages));
   }
   ngAfterViewInit(): void {
     this._terminalService.write('Bitte authentifizieren Sie sich!');
   }
   ngOnInit(): void {
-    this.mqtt$.subscribe({
-      next: (o) => {
-       this._mqttManager.checkFileIsSent(o)
-      },
-    });
-  
+    
 
     combineLatest([this.isAuthenticated$, this.token$])
       .pipe(

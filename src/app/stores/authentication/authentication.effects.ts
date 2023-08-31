@@ -4,9 +4,7 @@ import { catchError, map, mergeMap, switchMap } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { login, loginSuccess, loginFailure, sendToken, sendTokenSuccess, sendTokenFailure } from './authentication.actions';
 import { ApiService } from 'src/app/services/api.service';
-import { publishError, publishMessage, publishSuccess } from '../mqtt-client/mqtt-client.actions';
 import { Store } from '@ngrx/store';
-import { MqttClientState } from 'src/app/interfaces/mqtt-client-state';
 
 @Injectable()
 export class AuthenticationEffects {
@@ -28,24 +26,23 @@ export class AuthenticationEffects {
 
   sendToken$ = createEffect(() =>
   this.actions$.pipe(
-    ofType(sendToken),
-    switchMap(({ token }) => {
-      // Dispatch the MQTT publish action
-      this._store.dispatch(publishMessage({ topic: '/authentication/token', message: token }));
+    // ofType(sendToken),
+    // switchMap(({ token }) => {
+
       
-      return this.actions$.pipe(
-        ofType(publishSuccess, publishError),
-        mergeMap(action => {
-          if (action.type === publishSuccess.type) {
-            return of(sendTokenSuccess());
-          } else {
-            return of(sendTokenFailure({ error: 'Failed to publish the message.' }));
-          }
-        })
-      );
-    })
+    //   return this.actions$.pipe(
+    //     ofType(publishSuccess, publishError),
+    //     mergeMap(action => {
+    //       if (action.type === publishSuccess.type) {
+    //         return of(sendTokenSuccess());
+    //       } else {
+    //         return of(sendTokenFailure({ error: 'Failed to publish the message.' }));
+    //       }
+    //     })
+    //   );
+    // })
   )
 );
 
-  constructor(private actions$: Actions, private apiService: ApiService, private _store:Store<{mqtt:MqttClientState}>) {}
+  constructor(private actions$: Actions, private apiService: ApiService) {}
 }

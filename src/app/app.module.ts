@@ -36,8 +36,6 @@ import { TerminalComponent } from './components/terminal/terminal.component';
 import { DataEffects } from './stores/data/data.effects';
 import { MachinesComponent } from './components/machines/machines.component';
 import { JsonDialogComponent } from './components/dialogs/json-dialog/json-dialog.component';
-import { mqttReducer } from './stores/mqtt-client/mqtt-client.reducer';
-import { MqttClientEffects } from './stores/mqtt-client/mqtt-client.effects';
 import { IMqttServiceOptions, MqttModule } from 'ngx-mqtt';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { environment as env } from '../environments/environment';
@@ -86,12 +84,10 @@ const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
       spinner: spinnerReducer,
       auth: authenticationReducer,
       data: jsonFileReducer,
-      mqtt: mqttReducer,
     }),
     EffectsModule.forRoot([
       AuthenticationEffects,
       DataEffects,
-      MqttClientEffects,
     ]),
   ],
   providers: [
