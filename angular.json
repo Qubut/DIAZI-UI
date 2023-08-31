@@ -16,7 +16,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/diazi-ui",
+            "outputPath": "dist/DIAZI-UI/browser",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": ["zone.js"],
@@ -85,6 +85,66 @@
             "styles": ["src/styles.css"],
             "scripts": []
           }
+        },
+        "server": {
+          "builder": "@angular-devkit/build-angular:server",
+          "options": {
+            "outputPath": "dist/DIAZI-UI/server",
+            "main": "server.ts",
+            "tsConfig": "tsconfig.server.json"
+          },
+          "configurations": {
+            "production": {
+              "outputHashing": "media",
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ]
+            },
+            "development": {
+              "buildOptimizer": false,
+              "optimization": false,
+              "sourceMap": true,
+              "extractLicenses": false,
+              "vendorChunk": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve-ssr": {
+          "builder": "@nguniversal/builders:ssr-dev-server",
+          "configurations": {
+            "development": {
+              "browserTarget": "DIAZI-UI:build:development",
+              "serverTarget": "DIAZI-UI:server:development"
+            },
+            "production": {
+              "browserTarget": "DIAZI-UI:build:production",
+              "serverTarget": "DIAZI-UI:server:production"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "prerender": {
+          "builder": "@nguniversal/builders:prerender",
+          "options": {
+            "routes": [
+              "/"
+            ]
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "DIAZI-UI:build:production",
+              "serverTarget": "DIAZI-UI:server:production"
+            },
+            "development": {
+              "browserTarget": "DIAZI-UI:build:development",
+              "serverTarget": "DIAZI-UI:server:development"
+            }
+          },
+          "defaultConfiguration": "production"
         }
       }
     }
