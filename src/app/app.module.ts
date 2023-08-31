@@ -36,6 +36,7 @@ import { TerminalComponent } from './components/terminal/terminal.component';
 import { DataEffects } from './stores/data/data.effects';
 import { MachinesComponent } from './components/machines/machines.component';
 import { JsonDialogComponent } from './components/dialogs/json-dialog/json-dialog.component';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 @NgModule({
   declarations: [
     AppComponent,
@@ -54,6 +55,7 @@ import { JsonDialogComponent } from './components/dialogs/json-dialog/json-dialo
     HttpClientModule,
     BrowserAnimationsModule,
     FormsModule,
+    MatProgressBarModule,
     MatInputModule,
     MatFormFieldModule,
     ReactiveFormsModule,

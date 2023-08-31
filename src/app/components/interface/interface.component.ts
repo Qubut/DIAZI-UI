@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, Input, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Observable, combineLatest, filter, first, map, tap } from 'rxjs';
+import { Observable, combineLatest, filter, first, last, map, tap } from 'rxjs';
 import { AuthenticationState } from 'src/app/interfaces/authentication-state';
 import { DataState } from 'src/app/interfaces/data-state';
 import { SpinnerState } from 'src/app/interfaces/spinner-state';
@@ -46,15 +46,6 @@ import {
             transform: 'scale(0.5)',
           })
         ),
-      ]),
-    ]),
-    trigger('slideInOut', [
-      transition(':enter', [
-        style({ transform: 'translateX(-100%)' }),
-        animate('300ms ease-in', style({ transform: 'translateX(0%)' })),
-      ]),
-      transition(':leave', [
-        animate('300ms ease-out', style({ transform: 'translateX(-100%)' })),
       ]),
     ]),
     trigger('rotateInOut', [
@@ -122,7 +113,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
         filter(
           ([isAuthenticated, _]) => isAuthenticated
         ),
-        first(),
+        last(),
         tap(async ([_,isTokenSent]) => {
           if(isTokenSent)
           await this._terminalService.write('Token an NodeRed gesendet');

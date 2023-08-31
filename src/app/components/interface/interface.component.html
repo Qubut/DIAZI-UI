@@ -14,7 +14,7 @@
       *ngIf="(isAuthenticated$ | async) && !(machines$ | async)"
     ></app-upload-form>
     
-    <ng-container *ngIf="machines$ | async" @slideInOut>
+    <ng-container *ngIf="machines$ | async">
       <app-machines @fadeInOut></app-machines>
     </ng-container>
   </div>
